@@ -6,13 +6,18 @@ using System.Threading.Tasks;
 
 namespace MMRL
 {
+    //A "Model" is a "strategy." It holds some terribly named variables based on academic papers
     public class Model
     {
-        private List<float> d;
-        private float lambda;
-        private int size;
+        private List<float> d; //"d" stores a list of values which hold the inferred value of a certain action
+        private float lambda;  //lambda is a "learning speed" number. Basically, it tells the model how quickly to assume a conclusion
+                               //less is more caution, and more actions until reaching a final decision, and more is Repbulican
+        private int size;      //this stores the number of actions this model will keep track of
 
-        public Model() { }
+        public Model() { }     //empty constructor cuz "best practice"
+        
+        //Initialized a model based on the number of actions to choose upon, and the speed of convergence
+        //lambda is set higher up on the "agent" level, so this number is just passed down
         public Model(int numActions, float speed) 
         { 
             size = numActions; 
@@ -22,8 +27,12 @@ namespace MMRL
                 d.Add(0);
         }
 
+        //Realistically, I should have a boolean which is set once decisions are made, so this is a "don't copy this style of thinking" example
+        //nothing to see here
         public void setValues(int index, float value) { d[index] = value; } //USE ONLY FOR INITIALIZATION
 
+        //Looks back at the results of the last x actions (Window) to see how accurate this model has been based on the "real world"
+        //This value is used by the Agent to select a model for the next action
         public float probability(ref Window wind, ref List<Action> actions) 
         {
             bool[] rein = new bool[wind.size()];
@@ -40,6 +49,7 @@ namespace MMRL
             return prob;
         }
 
+        //Updates the "d" (value) list with the result of the action taken
         public void update(int index, bool reinforced) 
         {
             int b;
@@ -51,6 +61,7 @@ namespace MMRL
 
             if (d[index] < 0) { d[index] = 0; }
 
+            //poor man's logging. Uncomment for more information
             /*Console.Write("[");
             for (int i = 0; i < size; i++)
                 Console.Write(((int)(d[i] * 100)).ToString() + " ");
@@ -58,6 +69,7 @@ namespace MMRL
 
         }
 
+        //Returns this Model's suggestion for the next action
         public int Best()
         {
             int best = 0;
