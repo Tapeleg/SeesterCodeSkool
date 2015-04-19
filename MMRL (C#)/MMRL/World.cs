@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 
 namespace MMRL
 {
+    //"World" class sets the stage, and causes the agent to act
+    //This is more of an "interface" for several different potential worlds. Resuability and all that fun stuff
     public class World
     {
         protected virtual void init()
@@ -27,17 +29,22 @@ namespace MMRL
         }
     }
 
+    //One implementation of a "World"
     class ManyActions : World 
     {
-        //FourModels agent;
         ManyModels agent;
         List<Action> actions;
         int count = 0;
         bool go = true;
         float error = 0;
 
+        //Creates actions, instantiates the right agent.
         protected override void init()
         {
+
+            //sets up a list of actions, each with a percentage that it will provide a positive reinforcement
+            //The job of the agent is to find the action with the highest reinforcement rate
+            //The purpose of this whole project is to see if this "many-model" scheme speeds this process
             actions = new List<Action>();
 
             actions.Add(new Action(80));
@@ -82,12 +89,15 @@ namespace MMRL
                 Console.WriteLine(w + ":" + steps.ToString());
 
                 //gives time for the environment to reset before continuing
+                //If this line isn't there, then there isn't enough time for the agent to reset it's experiment
+                //and we report the same expiriment multiple times
                 System.Threading.Thread.Sleep(1200); 
             }
             else { go = false; Console.Write("Done!" + " " + (error)/50); Console.Read(); }
         }
     }
 
+    //Simply an object which holds a percentage likelihood of positive reinforcement
     public class Action
     {
 
